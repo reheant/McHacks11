@@ -1,11 +1,12 @@
 import Header from './Components/Header'; // Adjust the path if your file structure is different
+import Routes from './Components/Routes';
 
 
 function App() {
   return (
     <div >
       <Header />
-      hello
+      <Routes/>
     </div>
   );
 }
