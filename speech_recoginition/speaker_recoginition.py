@@ -34,13 +34,14 @@ def diaritize(path):
             % (segment.speaker_tag, segment.start_sec, segment.end_sec)
         )
 def trim_audio(input_path, count, start_ms, end_ms):
-    audio = AudioSegment.from_wav(transc)
+    audio = AudioSegment.from_wav(input_path)
     trimmed_audio = audio[start_ms:end_ms]
-    trimmed_audio.export(f"{audio_directory}\\transcript_{count}.wav", format="wav")
+    trimmed_audio.export(f"{audio_directory}\\trim_{count}.wav", format="wav")
 
 
 create_audio(1)
 print("someone else talk")
-create_audio(2)
-diaritize(f"{audio_directory}\\user_1.wav")
+#create_audio(2)
+trim_audio(f"{audio_directory}\\user_1.wav",1,0, 2500)
+#diaritize(f"{audio_directory}\\user_1.wav")
 
