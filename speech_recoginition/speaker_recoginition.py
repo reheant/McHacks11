@@ -37,5 +37,5 @@ def diaritize(path):
         )
 
 create_audio(1)
-#diaritize(f"{audio_directory}\\user_1.wav")
+diaritize(f"{audio_directory}\\user_1.wav")
 
