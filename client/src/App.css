@@ -1,0 +1,16 @@
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.letter-animation {
+  display: inline-block;
+  animation: slideInFromLeft 0.5s ease-out forwards;
+  /* animation-delay will be set inline for each letter */
+}
