@@ -43,15 +43,25 @@ def trim_audio(input_path, count, start_ms, end_ms):
     trimmed_audio = audio[start_ms:end_ms]
     trimmed_audio.export(f"{audio_directory}\\trim_{count}.wav", format="wav")
 
+def create_trims():
+    segments=diaritize(f"{audio_directory}\\transcript.wav")
+    speakers= set()
+    for segment in segments:
+        if segment.speaker_tag not in speakers:
+            speakers.add(segment.speaker_tag)
+            trim_audio(f"{audio_directory}\\transcript.wav",segment.speaker_tag, segment.start_sec,segment.end_sec)
+create_audio(1)
+create_audio(2)
+def merge (file1, file2, count1, count2):
 
-create_audio(-1)
-print("someone else talk")
-#create_audio(2)
-#trim_audio(f"{audio_directory}\\user_1.wav",1,0, 2500)
-segments=diaritize(f"{audio_directory}\\transcript.wav")
-speakers= set()
-for segment in segments:
-    if segment.speaker_tag not in speakers:
-        speakers.add(segment.speaker_tag)
-        trim_audio(f"{audio_directory}\\transcript.wav",segment.speaker_tag, segment.start_sec,segment.end_sec)
+    audio1 = AudioSegment.from_wav(file1)
+    audio2 = AudioSegment.from_wav(file2)
+
+    merged_audio = audio1 + audio2
+
+    merged_audio.export(f"{audio_directory}\\merged_{count1}_{count2}.wav", format="wav")
+
+merge(f"{audio_directory}\\user_1.wav",f"{audio_directory}\\user_2.wav",1,2)
+
+
 
