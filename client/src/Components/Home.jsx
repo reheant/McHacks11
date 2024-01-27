@@ -18,37 +18,40 @@ import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import AnimatedText from './AnimatedText';
 
 const TeamForm = () => {
-  const [scrumMaster, setScrumMaster] = useState("");
-  const [newDeveloper, setNewDeveloper] = useState("");
-  const [developers, setDevelopers] = useState([]);
+  const [teamLeader, setTeamLeader] = useState("");
+  const [newUser, setNewUser] = useState("");
+  const [users, setUsers] = useState([]);
 
   const navigate = useNavigate();
 
-  const handleScrumMasterChange = (event) => {
-    setScrumMaster(event.target.value);
+  const handleTeamLeaderChange = (event) => {
+    setTeamLeader(event.target.value);
   };
 
-  const handleNewDeveloperChange = (event) => {
-    setNewDeveloper(event.target.value);
+  const handleNewUserChange = (event) => {
+    setNewUser(event.target.value);
   };
 
-  const addDeveloper = () => {
-    if (newDeveloper) {
-      setDevelopers([...developers, newDeveloper]);
-      setNewDeveloper("");
+  const addUser = () => {
+    if (newUser) {
+      setUsers([...users, newUser]);
+      setNewUser("");
     }
   };
 
-  const deleteDeveloper = (index) => {
-    const updatedDevelopers = developers.filter((_, i) => i !== index);
-    setDevelopers(updatedDevelopers);
+  const deleteUser = (index) => {
+    const updatedUsers = users.filter((_, i) => i !== index);
+    setUsers(updatedUsers);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("Scrum Master:", scrumMaster);
-    console.log("Developers:", developers);
-    navigate('/Initialization', { state: { scrumMaster, developers } });
+    const teamData = {
+      teamLeader: teamLeader,
+      users: [teamLeader, ...users],
+    };
+    console.log("Team Data:", teamData);
+    navigate('/Initialization', { state: teamData });
   };
 
   return (
@@ -63,43 +66,43 @@ const TeamForm = () => {
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12}>
                   <TextField
-                    label="Scrum Master"
-                    value={scrumMaster}
-                    onChange={handleScrumMasterChange}
+                    label="Team Leader"
+                    value={teamLeader}
+                    onChange={handleTeamLeaderChange}
                     margin="normal"
                     fullWidth
                   />
                 </Grid>
                 <Grid item xs={9}>
                   <TextField
-                    label="Add Developer"
-                    value={newDeveloper}
-                    onChange={handleNewDeveloperChange}
+                    label="Add User"
+                    value={newUser}
+                    onChange={handleNewUserChange}
                     margin="normal"
                     fullWidth
                   />
                 </Grid>
                 <Grid item xs={3}>
-                  <IconButton onClick={addDeveloper} color="primary">
+                  <IconButton onClick={addUser} color="primary">
                     <AddCircleOutlineIcon />
                   </IconButton>
                 </Grid>
                 <Grid item xs={12}>
                   <List>
-                    {developers.map((developer, index) => (
+                    {users.map((user, index) => (
                       <ListItem
                         key={index}
                         secondaryAction={
                           <IconButton
                             edge="end"
                             aria-label="delete"
-                            onClick={() => deleteDeveloper(index)}
+                            onClick={() => deleteUser(index)}
                           >
                             <RemoveCircleOutlineIcon color="secondary" />
                           </IconButton>
                         }
                       >
-                        <ListItemText primary={developer} />
+                        <ListItemText primary={user} />
                       </ListItem>
                     ))}
                   </List>
