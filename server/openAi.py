@@ -3,11 +3,10 @@ import openai
 
 
 client = openai.OpenAI()
-openai.api_key="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"
 completion = client.chat.completions.create(
   model="gpt-3.5-turbo",
   messages=[
-    {"role": "system", "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
+    {"role": "system", "content": "You are a meeting assistant, you will be provided with textual input from a company meeting and you are to provide a meeting transcript with a summary at the end "},
     {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
   ]
 )
