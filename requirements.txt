@@ -1,1 +1,6 @@
 pveagle
+pvfalcon
+wavio
+sounddevice
+scipy
+pydub
