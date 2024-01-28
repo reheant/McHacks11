@@ -9,5 +9,4 @@ SpeechRecognition
 openai
 flask_cors
 pvleopard
-
 PyPDF2
