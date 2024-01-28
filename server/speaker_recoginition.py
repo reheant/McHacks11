@@ -17,7 +17,7 @@ def create_audio(name="transcript.wav", bitrate="192k"):
     
     duration = 10
     recording = sd.rec(int(duration * freq), 
-                    samplerate=freq, channels=2)
+                    samplerate=freq, channels=1)
     sd.wait()
     
 
@@ -91,33 +91,6 @@ def match()-> dict:
     
     return matches
 
-def transcribe_wav_with_timestamps(file_path):
-    # Load the WAV file
-    audio = AudioSegment.from_wav(file_path)
-
-    # Set up the speech recognition object
-    recognizer = sr.Recognizer()
-
-    # Transcribe the audio
-    with sr.AudioFile(file_path) as source:
-        audio_data = recognizer.record(source)
-
-    try:
-        # Use the Google Web Speech API for transcription
-        transcript = recognizer.recognize_google(audio_data, show_all=True)
-        # Extract timestamps and text from the recognition result
-        print(transcript)
-        segments = transcript['alternative'][0]['words']
-        for segment in segments:
-            start_time = segment['start']
-            end_time = segment['end']
-            word = segment['word']
-            print(f"{start_time} - {end_time}: {word}")
-    except sr.UnknownValueError:
-        print("Speech Recognition could not understand audio")
-    except sr.RequestError as e:
-        print(f"Could not request results from Google Speech Recognition service; {e}")
-
 def timestamps():
     leopard = pvleopard.create(access_key=access_key)
     transcript, words = leopard.process_file(f"{audio_directory}\\transcript.wav")
@@ -126,13 +99,36 @@ def timestamps():
 if __name__ =="__main__":
 
     access_key = os.environ.get("API_KEY")
-    leopard = pvleopard.create(access_key=access_key)
     #create_audio("Richard.wav")
     #create_audio()
     #create_trims()
     #print(match())
-    create_audio()
-    print(timestamps())
+    #create_audio()
+    times = timestamps()
+    seperated=diaritize("audio\\transcript.wav")
+    print(times)
+    count=0
+    matches= match()
+    print(matches)
+    previous = matches[str(seperated[count].speaker_tag)]
+    output = f"{previous}: "
+    endtime= float(seperated[0].end_sec)
+    for time in times:
+        if time.start_sec>endtime:
+            count+=1
+            output+="\n"
+            previous = matches[str(seperated[count].speaker_tag)]
+            output+=f"{previous}: "
+            endtime=float(seperated[count].end_sec)
+            
+        else:
+            output+=f"{time.word} "
+    print(output)
+    
+    
+
+
+
 
 
 
