@@ -96,20 +96,11 @@ def timestamps():
     transcript, words = leopard.process_file(f"{audio_directory}\\transcript.wav")
     leopard.delete()
     return words
-if __name__ =="__main__":
-
-    access_key = os.environ.get("API_KEY")
-    #create_audio("Richard.wav")
-    #create_audio()
-    #create_trims()
-    #print(match())
-    #create_audio()
+def transcript():
     times = timestamps()
     seperated=diaritize("audio\\transcript.wav")
-    print(times)
     count=0
     matches= match()
-    print(matches)
     previous = matches[str(seperated[count].speaker_tag)]
     output = f"{previous}: "
     endtime= float(seperated[0].end_sec)
@@ -123,8 +114,16 @@ if __name__ =="__main__":
             
         else:
             output+=f"{time.word} "
-    print(output)
-    
+    return output
+if __name__ =="__main__":
+
+    access_key = os.environ.get("API_KEY")
+    #create_audio("Richard.wav")
+    #create_audio()
+    #create_trims()
+    #print(match())
+    #create_audio()
+    print(transcript())
     
 
 
