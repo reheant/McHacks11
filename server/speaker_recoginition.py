@@ -6,7 +6,7 @@ import wavio as wv
 from pydub import AudioSegment
 import re
 
-access_key = os.environ.get("API_KEY")
+
 audio_directory = "audio"
 
 def create_audio(name="transcript.wav", bitrate="192k"):
@@ -50,12 +50,7 @@ def create_trims():
         if segment.speaker_tag not in speakers:
             speakers.add(segment.speaker_tag)
             trim_audio(f"{audio_directory}\\transcript.wav",segment.speaker_tag, segment.start_sec,segment.end_sec)
-create_audio("Richard.wav")
-print("someone else talk")
-create_audio("Rehean.wav")
-print("someone else talk")
-create_audio()
-create_trims()
+
 
 def merge (file1, file2)->str:
 
@@ -89,11 +84,18 @@ def match()-> dict:
         matches[match.group()] = "UNKNOWN"
     
     return matches
-print(match())
-
-        
 
 
+if __name__ =="__main__":
+
+    access_key = os.environ.get("API_KEY")
+    create_audio("Richard.wav")
+    print("someone else talk")
+    create_audio("Rehean.wav")
+    print("someone else talk")
+    create_audio()
+    create_trims()
+    print(match())
 
 
 
