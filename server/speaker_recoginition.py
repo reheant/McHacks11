@@ -35,6 +35,7 @@ def create_audio(name="transcript.wav", bitrate="192k"):
 
 
 def diaritize(path):
+    access_key = os.environ.get("API_KEY")
     falcon = pvfalcon.create(access_key=access_key)
 
     segments = falcon.process_file(path)
@@ -70,8 +71,6 @@ def compare(input)-> bool:
     for segment in segments:
         if segment.speaker_tag not in tags:
             tags.append(segment.speaker_tag)
-    print(segments)
-    print(tags)
     if len(tags)>2:
         return False
     return True
@@ -93,7 +92,6 @@ def match()-> dict:
                 break
         if not found:
             matches[match.group()] = "UNKNOWN"
-    print(matches)
     return matches
 
 def timestamps():
@@ -120,6 +118,10 @@ def transcript():
         else:
             output+=f"{time.word} "
     return output
+
+def full_transcript():
+    create_trims()
+    return full_transcript()
 
 if __name__ =="__main__":
 
