@@ -1,10 +1,12 @@
 import os
 import pvfalcon
+import pvleopard
 import sounddevice as sd
 from scipy.io.wavfile import write
 import wavio as wv
 from pydub import AudioSegment
 import re
+import speech_recognition as sr
 
 
 audio_directory = "audio"
@@ -15,7 +17,7 @@ def create_audio(name="transcript.wav", bitrate="192k"):
     
     duration = 10
     recording = sd.rec(int(duration * freq), 
-                    samplerate=freq, channels=2)
+                    samplerate=freq, channels=1)
     sd.wait()
     
 
@@ -40,7 +42,7 @@ def diaritize(path):
     return segments
 def trim_audio(input_path, count, start_ms, end_ms):
     audio = AudioSegment.from_wav(input_path)
-    trimmed_audio = audio[start_ms:end_ms]
+    trimmed_audio = audio[start_ms*1000:end_ms*1000]
     trimmed_audio.export(f"{audio_directory}\\trim_{count}.wav", format="wav")
 
 def create_trims():
@@ -65,7 +67,11 @@ def merge (file1, file2)->str:
 
 def compare(input)-> bool:
     segments = diaritize(input)
-    if len(segments)>1:
+    tags = []
+    for segment in segments:
+        if segment.speaker_tag not in tags:
+            tags.append(segment.speaker_tag)
+    if len(tags)>1:
         return False
     return True
 
@@ -85,17 +91,44 @@ def match()-> dict:
     
     return matches
 
-
+def timestamps():
+    leopard = pvleopard.create(access_key=access_key)
+    transcript, words = leopard.process_file(f"{audio_directory}\\transcript.wav")
+    leopard.delete()
+    return words
 if __name__ =="__main__":
 
     access_key = os.environ.get("API_KEY")
-    create_audio("Richard.wav")
-    print("someone else talk")
-    create_audio("Rehean.wav")
-    print("someone else talk")
-    create_audio()
-    create_trims()
-    print(match())
+    #create_audio("Richard.wav")
+    #create_audio()
+    #create_trims()
+    #print(match())
+    #create_audio()
+    times = timestamps()
+    seperated=diaritize("audio\\transcript.wav")
+    print(times)
+    count=0
+    matches= match()
+    print(matches)
+    previous = matches[str(seperated[count].speaker_tag)]
+    output = f"{previous}: "
+    endtime= float(seperated[0].end_sec)
+    for time in times:
+        if time.start_sec>endtime:
+            count+=1
+            output+="\n"
+            previous = matches[str(seperated[count].speaker_tag)]
+            output+=f"{previous}: "
+            endtime=float(seperated[count].end_sec)
+            
+        else:
+            output+=f"{time.word} "
+    print(output)
+    
+    
+
+
+
 
 
 
