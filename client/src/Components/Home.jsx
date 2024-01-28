@@ -1,4 +1,3 @@
-// TeamForm.js
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import {
@@ -12,10 +11,11 @@ import {
   ListItemText,
   Grid,
   Paper,
+  Stack,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
-import AnimatedText from './AnimatedText';
+import AnimatedText from "./AnimatedText";
 
 const TeamForm = () => {
   const [teamLeader, setTeamLeader] = useState("");
@@ -51,15 +51,36 @@ const TeamForm = () => {
       users: [teamLeader, ...users],
     };
     console.log("Team Data:", teamData);
-    navigate('/Initialization', { state: teamData });
+    navigate("/Initialization", { state: teamData });
   };
 
   return (
     <>
-      <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px'}}>
-        <h1><AnimatedText text="Welcome to My App" animationClassName="letter-animation" /></h1>
-      </Box>
-      <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '600px', maxHeight: "1000px"}}>
+      <Stack
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+         
+          
+        }}
+      >
+        <h1>
+          <AnimatedText
+            text="Welcome to Minute Handler"
+            animationClassName="letter-animation"
+          />
+        </h1>
+        <Box sx={{width:"41%"}}> <h5 style={{
+
+          justifyContent: "center",
+          alignItems: "center",}}>  <AnimatedText
+            text="Revolutionize your meetings with the Meeting Handler App, your all-in-one solution for creatingagendas,  capturing real-time updates, and generating concise meeting summaries, perfect for educators and businesses seeking seamless meeting management."
+            animationClassName="letter-animation"
+          /></h5></Box>
+       
+      </Stack>
+      <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '500px', maxHeight: "1000px"}}>
         <Container maxWidth="sm">
           <Paper sx={{ padding: "20px", marginTop: "20px", boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.3)' }}>
             <form onSubmit={handleSubmit}>
@@ -122,6 +143,7 @@ const TeamForm = () => {
           </Paper>
         </Container>
       </Box>
+      
     </>
   );
 };
