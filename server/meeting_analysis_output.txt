@@ -120,3 +120,51 @@
   "Discussion on Challenges and Solutions (5 minutes)": false,
   "Closing": false
 }
+{
+  "Welcome & Introductions": true,
+  "Business Overview": false,
+  "Current Performance Snapshot (Financials, Key Metrics)": false,
+  "Update on Project X (3 minutes)": false,
+  "Discussion on Challenges and Solutions (5 minutes)": false,
+  "Closing": false
+}
+{
+  "Welcome & Introductions": true,
+  "Business Overview": false,
+  "Current Performance Snapshot (Financials, Key Metrics)": false,
+  "Update on Project X (3 minutes)": false,
+  "Discussion on Challenges and Solutions (5 minutes)": false,
+  "Closing": false
+}
+{
+  "Welcome & Introductions": false,
+  "Business Overview": false,
+  "Current Performance Snapshot (Financials, Key Metrics)": false,
+  "Update on Project X (3 minutes)": false,
+  "Discussion on Challenges and Solutions (5 minutes)": false,
+  "Closing": false
+}
+{
+  "Welcome & Introductions": false,
+  "Business Overview": false,
+  "Current Performance Snapshot (Financials, Key Metrics)": false,
+  "Update on Project X (3 minutes)": false,
+  "Discussion on Challenges and Solutions (5 minutes)": false,
+  "Closing": false
+}
+{
+  "Welcome & Introductions": false,
+  "Business Overview": false,
+  "Current Performance Snapshot (Financials, Key Metrics)": false,
+  "Update on Project X (3 minutes)": false,
+  "Discussion on Challenges and Solutions (5 minutes)": false,
+  "Closing": false
+}
+{
+  "Welcome & Introductions": false,
+  "Business Overview": false,
+  "Current Performance Snapshot (Financials, Key Metrics)": false,
+  "Update on Project X (3 minutes)": false,
+  "Discussion on Challenges and Solutions (5 minutes)": false,
+  "Closing": false
+}
