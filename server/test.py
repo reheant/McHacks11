@@ -8,35 +8,8 @@ import wave
 import os, json
 client = openai.OpenAI()
 init_rec = sr.Recognizer()
-def set_meeting_minutes():
-    meeting_minutes = '''
-Meeting Agenda
-
-Date: [Insert Date]
-Time: [Insert Time]
-Duration: 30 minutes
-Location: [Insert Location/Video Conference Link]
-Attendees: [List Attendees]
-
-Opening
-
-1. Welcome & Introductions (5 minutes)
-2. Review of Agenda (2 minutes)
-3.Business Overview
-
-4. Brief recap of last meeting's action items (3 minutes)
-5. Current performance snapshot (financials, key metrics) (5 minutes)
-6. Project Updates
-
-7. Update on Project  X (3 minutes)
-8. Discussion on challenges and solutions (5 minutes)
-9. New Business
-
-10. Introduction of new initiative/strategy (5 minutes)
-11. Open floor for suggestions and ideas (2 minutes)
-12. Closing
-13. Confirmation of next meeting date and objectives (2 minutes)
-'''
+def set_meeting_minutes(input):
+    meeting_minutes = input
     return meeting_minutes
 
 def recognize_audio(audio):
@@ -83,7 +56,8 @@ def record_audio(start_time, init_rec, source):
     return meeting_transcript
 
 
-def final_record():
+def final_record(agenda):
+    set_meeting_minutes(agenda)
     with sr.Microphone() as source:
         start_time = time.time()
         transcript = record_audio(start_time, init_rec, source)
