@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-from test import set_meeting_minutes
+
 from speaker_recoginition import create_audio
 from Pdf2Text import extract_text_from_pdf
 
@@ -52,10 +52,15 @@ def transform_pdf():
   
 
 @app.route('/Meeting', methods=['POST'])
-def record_voice():
-    minutes = set_meeting_minutes()
-    print(minutes)
-    return jsonify({'minutes': minutes})
+def HandleMeetingMinutes():
+    data = request.json
+    meeting_minutes = data.get('meetingMinutes')
+
+    print("Received meeting minutes:", meeting_minutes)
+
+    # Send back a confirmation response
+    return jsonify({'status': 'success', 'message': 'Meeting minutes received successfully.'})
+
 
 
 if __name__ == '__main__':

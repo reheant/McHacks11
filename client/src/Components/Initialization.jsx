@@ -1,7 +1,6 @@
-// NewPage.js
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Modal,Box, List, ListItem, ListItemText, IconButton, Button, Paper, Typography, Container,Input  } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Modal, Box, List, ListItem, ListItemText, IconButton, Button, Paper, Typography, Container, Input } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
 
 const style = {
@@ -14,24 +13,25 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
 const NewPage = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const { teamLeader, users } = location.state || {};
+  const { users } = location.state || {};
   const [recordings, setRecordings] = useState({});
   const [pdfFile, setPdfFile] = useState(null);
 
   const handleRecord = async (userName) => {
     try {
-      const response = await fetch('http://localhost:5000/Initialization', { // Replace with your Flask server URL
+      const response = await fetch('http://localhost:5000/Initialization', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userName }), // Send the username as part of the request
+        body: JSON.stringify({ userName }),
       });
       const data = await response.json();
       if (data.status === 'success') {
-        // Update state to indicate recording is done for this user
         setRecordings(prev => ({ ...prev, [userName]: true }));
       }
     } catch (error) {
@@ -40,11 +40,10 @@ const NewPage = () => {
   };
 
   const allRecorded = users && users.every(user => recordings[user]);
-  const [open, setOpen] = useState(false);
 
   const handleClose = () => setOpen(false);
   const handleStart = () => {
-    setOpen(true)
+    setOpen(true);
     console.log('Sending data to backend...');
   };
   const handleFileChange = (event) => {
@@ -69,7 +68,7 @@ const NewPage = () => {
       
       if (response.ok) {
         console.log("Extracted text:", data.extracted_text);
-        // You can now use data.extracted_text in your app
+        navigate('/Meeting', { state: { extractedText: data.extracted_text } });
       } else {
         console.error("Error in response:", data.error);
       }
@@ -77,6 +76,8 @@ const NewPage = () => {
       console.error('Error uploading PDF:', error);
     }
   };
+
+  const [open, setOpen] = useState(false);
 
   return (
     <Container maxWidth="sm">
@@ -100,38 +101,37 @@ const NewPage = () => {
           variant="contained"
           color="primary"
           onClick={handleStart}
-        
           disabled={!allRecorded}
         >
           Next
         </Button>
         <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Upload PDF File
-          </Typography>
-          <Input
-            type="file"
-            onChange={handleFileChange}
-            accept="application/pdf"
-            sx={{ mt: 2 }}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleUpload}
-            disabled={!pdfFile} // Button is disabled if no PDF is uploaded
-            sx={{ mt: 2 }}
-          >
-            Upload and Continue to Meeting
-          </Button>
-        </Box>
-      </Modal>
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Upload PDF File
+            </Typography>
+            <Input
+              type="file"
+              onChange={handleFileChange}
+              accept="application/pdf"
+              sx={{ mt: 2 }}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleUpload}
+              disabled={!pdfFile}
+              sx={{ mt: 2 }}
+            >
+              Upload and Continue to Meeting
+            </Button>
+          </Box>
+        </Modal>
       </Box>
     </Container>
   );
