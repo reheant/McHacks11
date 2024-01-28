@@ -91,12 +91,14 @@ def match() -> dict:
 
 def timestamps():
     leopard = pvleopard.create(access_key=access_key)
-    transcript, words = leopard.process_file(f"{audio_directory}\\transcript.wav")
+    transcript_file_path= os.path.join(audio_directory, "transcript.wav")
+    transcript, words = leopard.process_file(transcript_file_path)
     leopard.delete()
     return words
 def transcript():
     times = timestamps()
-    seperated=diaritize("audio\\transcript.wav")
+    transcript_file_path= os.path.join(audio_directory, "transcript.wav")
+    seperated=diaritize(transcript_file_path)
     count=0
     matches= match()
     previous = matches[str(seperated[count].speaker_tag)]
