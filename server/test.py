@@ -1,7 +1,11 @@
 import speech_recognition as sr
 import time
 from concurrent.futures import ThreadPoolExecutor
-import openai, json
+
+import openai
+import numpy as np
+import wave
+import os, json
 client = openai.OpenAI()
 init_rec = sr.Recognizer()
 def set_meeting_minutes():
@@ -69,14 +73,27 @@ def setting_openAI(transcript, meeting_minutes):
 
 def record_audio(start_time, init_rec, source):
     meeting_transcript = ""
+    audio_chunks = []
     with ThreadPoolExecutor(max_workers=1) as executor:
-        while time.time() - start_time < (60*2):
+        while time.time() - start_time < (30):
             audio = init_rec.record(source, duration=10)
             future = executor.submit(recognize_audio, audio)
             meeting_transcript += future.result()
+             # Check if the audio array is one-dimensional
+            if audio.ndim == 1:
+                audio = audio.reshape(-1, 1)  # Convert to a column vector
+            audio_chunks.append(audio)
             setting_openAI(meeting_transcript, set_meeting_minutes())
             time.sleep(1) 
+    combined_audio = np.concatenate(audio_chunks, axis=0)
+    output_filename = os.path.join("audio", "transcipt.wav")
+    save_wav(output_filename, combined_audio)
     return meeting_transcript
+def callback(indata, frames, time, status):
+    if status:
+        print(status, flush=True)
+    wave_file.writeframes(indata.copy())
+def record():
 
 def final_record():
     with sr.Microphone() as source:
