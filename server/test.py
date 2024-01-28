@@ -6,54 +6,32 @@ client = openai.OpenAI()
 
 def set_meeting_minutes():
     meeting_minutes = '''
-Meeting Minutes
-Date: January 27, 2024
-Time: 10:00 AM - 11:30 AM
-Location: Conference Room B, Vertex Solutions Headquarters
+Meeting Agenda
 
-Attendees:
+Date: [Insert Date]
+Time: [Insert Time]
+Duration: 30 minutes
+Location: [Insert Location/Video Conference Link]
+Attendees: [List Attendees]
 
-Samantha Green (CEO)
-Alex Chen (CFO)
-Emily Johnson (Head of Marketing)
-Michael Smith (Head of Product Development)
-Lisa Ray (HR Manager)
-Absent:
+Opening
 
-Rahul Gupta (CTO) - On business travel
-1. Opening
-The meeting was called to order by Samantha Green at 10:05 AM. Samantha welcomed everyone and emphasized the importance of aligning the company's strategies for the upcoming quarter.
+1. Welcome & Introductions (5 minutes)
+2. Review of Agenda (2 minutes)
+3.Business Overview
 
-2. Approval of Minutes
-Minutes from the previous meeting held on December 20, 2023, were circulated and approved.
+4. Brief recap of last meeting's action items (3 minutes)
+5. Current performance snapshot (financials, key metrics) (5 minutes)
+6. Project Updates
 
-3. Financial Update (Alex Chen)
-Alex presented the financial summary for Q4 2023. Revenue exceeded projections by 8%, primarily due to the successful launch of the new line of productivity software.
-Discussed the budget allocation for Q1 2024, with a focus on increasing the R&D budget by 15%.
-Proposed a review of current investment portfolios, suggesting a reallocation towards more sustainable and green technologies.
-4. Marketing Initiatives (Emily Johnson)
-Emily introduced the new marketing campaign "TechForward," aimed at promoting the company's commitment to innovation and sustainability.
-Discussed the results of the recent market survey, indicating a strong market presence but a need for improved customer support.
-Proposed a partnership with influencers in the tech industry to boost the upcoming product launch.
-5. Product Development Update (Michael Smith)
-Michael provided an update on the development of the AI-driven analytics tool, highlighting the successful integration of real-time data processing features.
-Discussed challenges in the current testing phase, particularly in data security and user privacy.
-Proposed hiring additional AI specialists to expedite the project's completion.
-6. HR Updates (Lisa Ray)
-Lisa presented the quarterly HR report, noting a 95% employee satisfaction rate.
-Discussed the upcoming leadership training program and the introduction of a new wellness initiative.
-Addressed the need to revise the remote work policy to accommodate hybrid work models better.
-7. Miscellaneous Issues
-Samantha reminded the team about the upcoming annual shareholders' meeting.
-Alex suggested scheduling a financial audit in March.
-Emily requested additional resources for the marketing team to ensure the success of the "TechForward" campaign.
-8. Closing
-Samantha thanked everyone for their contributions and adjourned the meeting at 11:20 AM. The next meeting was scheduled for February 24, 2024.
+7. Update on Project  X (3 minutes)
+8. Discussion on challenges and solutions (5 minutes)
+9. New Business
 
-Minutes prepared by: Jessica Parker (Executive Assistant)
-Minutes approved by: Samantha Green (CEO)
-
-[Distribution: All Attendees, Company Board Members]
+10. Introduction of new initiative/strategy (5 minutes)
+11. Open floor for suggestions and ideas (2 minutes)
+12. Closing
+13. Confirmation of next meeting date and objectives (2 minutes)
 '''
     return meeting_minutes
 
@@ -72,15 +50,15 @@ def recognize_audio(audio):
         return ""
 
 
-def setting_openAI():
+def setting_openAI(transcript, meeting_minutes):
     
     completion = client.chat.completions.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "system", "content": '''You are a meeting assistant, you will be provided with meeting minutes for a company meeting, you will also be provided with 
-         
+        {"role": "system", "content": '''You are a meeting assistant, compare the different points in the meeting agenda to the points discussed in the 
+         transcript. Return me in JSON, the values that match.
          '''},
-        {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
+        {"role": "user", "content": "Here is the meeting agenda for the meeting: " + meeting_minutes + " here is the transcript"  + transcript}
     ]
 )
     
@@ -94,7 +72,8 @@ def record_audio(start_time, init_rec, source):
             audio = init_rec.record(source, duration=10)
             future = executor.submit(recognize_audio, audio)
             meeting_transcript += future.result()
-            time.sleep(1)  
+            setting_openAI(meeting_transcript, set_meeting_minutes())
+            time.sleep(1) 
     return meeting_transcript
 
 init_rec = sr.Recognizer()
