@@ -1,18 +1,18 @@
 import PyPDF2
 
-def extract_text_from_pdf(pdf_file_path):
+def extract_text_from_pdf(pdf_stream):
     try:
-        with open(pdf_file_path, 'rb') as file:
-            reader = PyPDF2.PdfReader(file)
-            num_pages = len(reader.pages)
+        # Use PdfFileReader to read the file stream
+        reader = PyPDF2.PdfReader(pdf_stream)
+        num_pages = len(reader.pages)
 
-            all_text = ""
-            for page_num in range(num_pages):
-                page = reader.pages[page_num]
-                text = page.extract_text()
-                all_text += text
+        all_text = ""
+        for page_num in range(num_pages):
+            page = reader.pages[page_num]
+            text = page.extract_text()  # Make sure to call the function with ()
+            all_text += text
 
-            return all_text
+        return all_text
     except Exception as e:
         print(f"An error occurred: {e}")
         return ""
