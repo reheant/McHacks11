@@ -5,7 +5,8 @@ sounddevice
 scipy
 pydub
 ffmpeg-python
-speech_recognition
+SpeechRecognition
 openai
 flask_cors
 pvleopard
+PyPDF2
