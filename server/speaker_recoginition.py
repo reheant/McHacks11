@@ -1,12 +1,16 @@
 import os
 import pvfalcon
 import pvleopard
+import pveagle
 import sounddevice as sd
 from scipy.io.wavfile import write
 import wavio as wv
 from pydub import AudioSegment
 import re
-import speech_recognition as sr
+import wave
+import numpy as np
+import librosa
+import soundfile as sf
 
 
 audio_directory = "audio"
@@ -25,10 +29,9 @@ def create_audio(name="transcript.wav", bitrate="192k"):
     wv.write(file_path, recording, freq, sampwidth=2)
 
 def diaritize(path):
+    access_key = os.environ.get("API_KEY")
     falcon = pvfalcon.create(access_key=access_key)
     segments = falcon.process_file(path)
-    for segment in segments:
-        print("{speaker_tag=%d start_sec=%.2f end_sec=%.2f}" % (segment.speaker_tag, segment.start_sec, segment.end_sec))
     return segments
 
 def trim_audio(input_path, count, start_ms, end_ms):
@@ -60,7 +63,7 @@ def compare(input) -> bool:
     for segment in segments:
         if segment.speaker_tag not in tags:
             tags.append(segment.speaker_tag)
-    if len(tags)>1:
+    if len(tags)>2:
         return False
     return True
 
@@ -68,18 +71,22 @@ def match() -> dict:
     matches = {}
     all_files = os.listdir(audio_directory)
     trimmed_files = [file for file in all_files if file.startswith("trim")]
-    user_files = [file for file in all_files if not file.startswith("trim") and file != "transcript.wav"]
+    user_files = [file for file in all_files if not file.startswith("trim") and file != "transcript.wav"and not file=="sample.wav" and not file=="merged.wav"]]
     for trimmed_file in trimmed_files:
         for user_file in user_files:
             user_file_path = os.path.join(audio_directory, user_file)
             trimmed_file_path = os.path.join(audio_directory, trimmed_file)
             merged = merge(user_file_path, trimmed_file_path)
+            merged_file_path= os.path.join(audio_directory, "merged.wav")
+            sample_file_path= os.path.join(audio_directory, "sample.wav")
+            merged = merge(merged_file_path,sample_file_path)  
             match = re.search(r'\d+', trimmed_file)
             if match and compare(merged):
                 matches[match.group()] = user_file.replace(".wav", "")
-            else:
-                matches[match.group()] = "UNKNOWN"
-
+                found=True
+                break
+        if not found:
+            matches[match.group()] = "UNKNOWN"
     return matches
 
 def timestamps():
@@ -106,15 +113,23 @@ def transcript():
         else:
             output+=f"{time.word} "
     return output
+
+def full_transcript():
+    create_trims()
+    return full_transcript()
+
 if __name__ =="__main__":
 
     access_key = os.environ.get("API_KEY")
-    #create_audio("Richard.wav")
-    #create_audio()
-    #create_trims()
+    create_audio("Richard.wav")
+    print("swap")
+    create_audio("Andrew.wav")
+    print("swap")
+    create_audio()
+    create_trims()
     #print(match())
-    #create_audio()
     print(transcript())
+
     
 
 
