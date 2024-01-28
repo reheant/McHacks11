@@ -8,7 +8,7 @@ import wave
 import os, json
 client = openai.OpenAI()
 init_rec = sr.Recognizer()
-def set_meeting_minutes(input):
+def set_meeting_minutes(input = ""):
     meeting_minutes = input
     return meeting_minutes
 
