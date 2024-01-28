@@ -1,0 +1,50 @@
+{
+  "Welcome & Introductions": true,
+  "Review of Agenda": true,
+  "Brief recap of last meeting's action items": false,
+  "Current performance snapshot (financials, key metrics)": true,
+  "Update on Project X": true,
+  "Discussion on challenges and solutions": true,
+  "Introduction of new initiative/strategy": true,
+  "Open floor for suggestions and ideas": true,
+  "Closing": true,
+  "Confirmation of next meeting date and objectives": true
+}
+{
+  "Welcome & Introductions": true,
+  "Review of Agenda": true,
+  "Business Overview": false, 
+  "Brief recap of last meeting's action items": false,
+  "Current performance snapshot (financials, key metrics)": false,
+  "Update on Project X": false,
+  "Discussion on challenges and solutions": false,
+  "Introduction of new initiative/strategy": false,
+  "Open floor for suggestions and ideas": false,
+  "Closing": false,
+  "Confirmation of next meeting date and objectives": false
+}
+{
+  "Welcome & Introductions": true,
+  "Review of Agenda": false,
+  "Brief recap of last meeting's action items": false,
+  "Current performance snapshot (financials, key metrics)": true,
+  "Update on Project  X": false,
+  "Discussion on challenges and solutions": false,
+  "Introduction of new initiative/strategy": false,
+  "Open floor for suggestions and ideas": false,
+  "Closing": false,
+  "Confirmation of next meeting date and objectives": false
+}
+{
+  "Welcome & Introductions": false,
+  "Review of Agenda": true,
+  "Business Overview": false,
+  "Brief recap of last meeting's action items": false,
+  "Current performance snapshot (financials, key metrics)": false,
+  "Update on Project X": true,
+  "Discussion on challenges and solutions": false,
+  "Introduction of new initiative/strategy": true,
+  "Open floor for suggestions and ideas": true,
+  "Closing": false,
+  "Confirmation of next meeting date and objectives": false
+}
