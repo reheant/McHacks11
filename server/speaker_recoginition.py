@@ -38,11 +38,6 @@ def diaritize(path):
     falcon = pvfalcon.create(access_key=access_key)
 
     segments = falcon.process_file(path)
-    for segment in segments:
-        print(
-            "{speaker_tag=%d start_sec=%.2f end_sec=%.2f}"
-            % (segment.speaker_tag, segment.start_sec, segment.end_sec)
-        )
     return segments
 def trim_audio(input_path, count, start_ms, end_ms):
     audio = AudioSegment.from_wav(input_path)
@@ -75,7 +70,9 @@ def compare(input)-> bool:
     for segment in segments:
         if segment.speaker_tag not in tags:
             tags.append(segment.speaker_tag)
-    if len(tags)>1:
+    print(segments)
+    print(tags)
+    if len(tags)>2:
         return False
     return True
 
@@ -83,16 +80,20 @@ def match()-> dict:
     matches = {}
     all_files = os.listdir("audio")
     trimmed_files = [file for file in all_files if file.startswith("trim")]
-    user_files = [file for file in all_files if not file.startswith("trim") and not file=="transcript.wav"]
+    user_files = [file for file in all_files if not file.startswith("trim") and not file=="transcript.wav"and not file=="sample.wav" and not file=="merged.wav"]
+    found=False
     for trimmed_file in trimmed_files:
         for user_file in user_files:
-            merged = merge(f"{audio_directory}\\{user_file}", f"{audio_directory}\\{trimmed_file}")        
+            merged = merge(f"{audio_directory}\\{user_file}", f"{audio_directory}\\{trimmed_file}")
+            merged = merge(f"{audio_directory}\\merged.wav",f"{audio_directory}\\sample.wav")       
             match = re.search(r'\d+', trimmed_file)
             if compare(merged):
                 matches[match.group()] = user_file.replace(".wav", "")
-
-        matches[match.group()] = "UNKNOWN"
-    
+                found=True
+                break
+        if not found:
+            matches[match.group()] = "UNKNOWN"
+    print(matches)
     return matches
 
 def timestamps():
@@ -119,56 +120,18 @@ def transcript():
         else:
             output+=f"{time.word} "
     return output
-def read_wav_file(file_path):
-    with wave.open(file_path, 'rb') as wav_file:
-        # Get basic information about the WAV file
-        num_channels = wav_file.getnchannels()
-        sample_width = wav_file.getsampwidth()
-        frame_rate = wav_file.getframerate()
-        num_frames = wav_file.getnframes()
-
-        # Read audio data from the WAV file
-        audio_data_raw = wav_file.readframes(num_frames)
-
-    # Convert raw audio data to NumPy array
-    audio_data_array = np.frombuffer(audio_data_raw, dtype=np.int16)
-
-    return audio_data_array
-def create_user_profile():
-    eagle_profiler = pveagle.create_profiler(access_key)
-    percentage = 0.0
-    while percentage < 100.0:
-        percentage, feedback = eagle_profiler.enroll(read_wav_file("audio\\Richard.wav"))
-        print(feedback.name)
-    speaker_profile = eagle_profiler.export()
-    eagle_profiler.delete()
-    return speaker_profile
-def change_frame_length(input_path,new_frame_length):
-    # Load the audio file using librosa
-    y, sr = librosa.load(input_path, sr=None)
-
-    # Change the frame length using resample
-    y_resampled = librosa.resample(y, orig_sr=sr, target_sr=new_frame_length)
-
-    # Save the modified audio to a new WAV file
-    sf.write(input_path, y_resampled, new_frame_length)
-
-def recognize_user(speaker_profile):
-    eagle = pveagle.create_recognizer(access_key, speaker_profile)
-    change_frame_length("audio\\trim_1.wav",512)
-    score = eagle.process(read_wav_file("audio\\trim_1.wav"))
 
 if __name__ =="__main__":
 
     access_key = os.environ.get("API_KEY")
-    #create_audio("Richard.wav")
-    #create_audio()
-    #create_trims()
+    create_audio("Richard.wav")
+    print("swap")
+    create_audio("Andrew.wav")
+    print("swap")
+    create_audio()
+    create_trims()
     #print(match())
-    #create_audio()
-    #print(transcript())
-    user_profile=create_user_profile()
-    print(recognize_user(user_profile))
+    print(transcript())
 
     
 
