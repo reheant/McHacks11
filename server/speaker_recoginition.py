@@ -116,7 +116,7 @@ def full_transcript():
     create_trims()
     return full_transcript()
 
-def record():
+def record2():
     summ=0
     transcript_path = os.path.join(audio_directory, "transcript.wav")
     while not ended:
