@@ -35,7 +35,7 @@ def record():
     meeting_minutes = data.get('meetingMinutes')
     try:
         record_thread = threading.Thread(target=record2)
-        print("hello")
+
         listen_thread = threading.Thread(target=final_record(meeting_minutes))
 
         record_thread.start()
@@ -99,6 +99,7 @@ def HandleMeetingMinutes():
 def get_gpt_json():
     json_objects = read_json_objects_from_file()
     json_result_str = json.dumps(json_objects, indent=4)
+    print(json_result_str)
     return(json_result_str)
         
 
