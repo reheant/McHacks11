@@ -1,6 +1,8 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from speaker_recoginition import create_audio
+from Pdf2Text import extract_text_from_pdf
+
 app = Flask(__name__)
 CORS(app, resources={r"/recordvoice": {"origins": "http://localhost:3000"}})
 
