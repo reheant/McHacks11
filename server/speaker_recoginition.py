@@ -16,56 +16,48 @@ import soundfile as sf
 audio_directory = "audio"
 
 def create_audio(name="transcript.wav", bitrate="192k"):
-
     freq = 44100
-    
     duration = 10
-    recording = sd.rec(int(duration * freq), 
-                    samplerate=freq, channels=1)
+    recording = sd.rec(int(duration * freq), samplerate=freq, channels=1)
     sd.wait()
     
-
     if not os.path.exists(audio_directory):
         os.makedirs(audio_directory)
 
-    write(f"{audio_directory}\\{name}", freq, recording)
-
-    wv.write(f"{audio_directory}\\{name}", recording, freq, sampwidth=2)
-
-
+    file_path = os.path.join(audio_directory, name)
+    write(file_path, freq, recording)
+    wv.write(file_path, recording, freq, sampwidth=2)
 
 def diaritize(path):
     access_key = os.environ.get("API_KEY")
     falcon = pvfalcon.create(access_key=access_key)
-
     segments = falcon.process_file(path)
     return segments
+
 def trim_audio(input_path, count, start_ms, end_ms):
     audio = AudioSegment.from_wav(input_path)
     trimmed_audio = audio[start_ms*1000:end_ms*1000]
-    trimmed_audio.export(f"{audio_directory}\\trim_{count}.wav", format="wav")
+    trimmed_file_path = os.path.join(audio_directory, f"trim_{count}.wav")
+    trimmed_audio.export(trimmed_file_path, format="wav")
 
 def create_trims():
-    segments=diaritize(f"{audio_directory}\\transcript.wav")
-    speakers= set()
+    transcript_path = os.path.join(audio_directory, "transcript.wav")
+    segments = diaritize(transcript_path)
+    speakers = set()
     for segment in segments:
         if segment.speaker_tag not in speakers:
             speakers.add(segment.speaker_tag)
-            trim_audio(f"{audio_directory}\\transcript.wav",segment.speaker_tag, segment.start_sec,segment.end_sec)
+            trim_audio(transcript_path, str(segment.speaker_tag), int(segment.start_sec * 1000), int(segment.end_sec * 1000))
 
-
-def merge (file1, file2)->str:
-
+def merge(file1, file2) -> str:
     audio1 = AudioSegment.from_wav(file1)
     audio2 = AudioSegment.from_wav(file2)
-
     merged_audio = audio1 + audio2
+    merged_file_path = os.path.join(audio_directory, "merged.wav")
+    merged_audio.export(merged_file_path, format="wav")
+    return merged_file_path
 
-    merged_audio.export(f"{audio_directory}\\merged.wav", format="wav")
-    return f"{audio_directory}\\merged.wav"
-
-
-def compare(input)-> bool:
+def compare(input) -> bool:
     segments = diaritize(input)
     tags = []
     for segment in segments:
@@ -75,18 +67,21 @@ def compare(input)-> bool:
         return False
     return True
 
-def match()-> dict:
+def match() -> dict:
     matches = {}
-    all_files = os.listdir("audio")
+    all_files = os.listdir(audio_directory)
     trimmed_files = [file for file in all_files if file.startswith("trim")]
-    user_files = [file for file in all_files if not file.startswith("trim") and not file=="transcript.wav"and not file=="sample.wav" and not file=="merged.wav"]
-    found=False
+    user_files = [file for file in all_files if not file.startswith("trim") and file != "transcript.wav"and not file=="sample.wav" and not file=="merged.wav"]]
     for trimmed_file in trimmed_files:
         for user_file in user_files:
-            merged = merge(f"{audio_directory}\\{user_file}", f"{audio_directory}\\{trimmed_file}")
-            merged = merge(f"{audio_directory}\\merged.wav",f"{audio_directory}\\sample.wav")       
+            user_file_path = os.path.join(audio_directory, user_file)
+            trimmed_file_path = os.path.join(audio_directory, trimmed_file)
+            merged = merge(user_file_path, trimmed_file_path)
+            merged_file_path= os.path.join(audio_directory, "merged.wav")
+            sample_file_path= os.path.join(audio_directory, "sample.wav")
+            merged = merge(merged_file_path,sample_file_path)  
             match = re.search(r'\d+', trimmed_file)
-            if compare(merged):
+            if match and compare(merged):
                 matches[match.group()] = user_file.replace(".wav", "")
                 found=True
                 break

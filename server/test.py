@@ -56,7 +56,7 @@ def setting_openAI(transcript, meeting_minutes):
     model="gpt-3.5-turbo",
     messages=[
         {"role": "system", "content": '''You are a meeting assistant, compare the different points in the meeting agenda to the points discussed in the 
-         transcript. Return me in JSON, the values that match.
+         transcript. Return me in JSON, the values that match. Respond with true or false for each value.
          '''},
         {"role": "user", "content": "Here is the meeting agenda for the meeting: " + meeting_minutes + " here is the transcript"  + transcript}
     ]
