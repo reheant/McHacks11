@@ -10,6 +10,7 @@ import re
 
 audio_directory = "audio"
 summ = 0
+ended = False
 def create_audio(name="transcript.wav", bitrate="192k"):
     freq = 44100
     duration = 10
@@ -118,7 +119,7 @@ def full_transcript():
 def record():
     summ=0
     transcript_path = os.path.join(audio_directory, "transcript.wav")
-    while summ<30:
+    while not ended:
         file_path = os.path.join(audio_directory, f"{summ}_transcript.wav")
         if summ>0:
             create_audio(f"{summ}_transcript.wav")
