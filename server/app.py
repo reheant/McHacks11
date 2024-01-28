@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from test import final_record, read_json_objects_from_file
 import speaker_recoginition
-from speaker_recoginition import create_audio, record
+from speaker_recoginition import create_audio, record2
 from Pdf2Text import extract_text_from_pdf
 import json
 import threading
@@ -32,7 +32,7 @@ def record_voice():
 @app.route('/Start', methods=['POST'])
 def record():
     try:
-        record_thread = threading.Thread(target=record)
+        record_thread = threading.Thread(target=record2)
         listen_thread = threading.Thread(target=final_record)
 
         record_thread.start()
@@ -44,7 +44,7 @@ def record():
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/Stop', methods=['POST'])
-def record():
+def record3():
     try:
         speaker_recoginition.ended= True
         for thread in threads:
