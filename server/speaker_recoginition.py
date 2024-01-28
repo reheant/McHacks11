@@ -86,6 +86,7 @@ def match() -> dict:
     return matches
 
 def timestamps():
+    access_key = os.environ.get("API_KEY")
     leopard = pvleopard.create(access_key=access_key)
     transcript_file_path= os.path.join(audio_directory, "transcript.wav")
     transcript, words = leopard.process_file(transcript_file_path)
@@ -140,7 +141,7 @@ if __name__ =="__main__":
     #create_trims()
     ##print(match())
     #print(transcript())
-    record()
+    record2()
 
     
 
