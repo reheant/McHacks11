@@ -31,14 +31,18 @@ def record_voice():
 
 @app.route('/Start', methods=['POST'])
 def record():
+    data = request.json
+    meeting_minutes = data.get('meetingMinutes')
     try:
         record_thread = threading.Thread(target=record2)
-        listen_thread = threading.Thread(target=final_record)
+        print("hello")
+        listen_thread = threading.Thread(target=final_record(meeting_minutes))
 
         record_thread.start()
         listen_thread.start()
         threads.append(record_thread)
         threads.append(listen_thread)
+        return jsonify({'status': 'success'})
     except Exception as e:
         print(e) 
         return jsonify({'status': 'error', 'message': str(e)}), 500
@@ -49,7 +53,7 @@ def record3():
         speaker_recoginition.ended= True
         for thread in threads:
             thread.join()
-
+        return jsonify({'status': 'success'})
     except Exception as e:
         print(e) 
         return jsonify({'status': 'error', 'message': str(e)}), 500

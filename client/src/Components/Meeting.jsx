@@ -12,6 +12,7 @@ const Meeting = () => {
   const location = useLocation();
   const { extractedText } = location.state || {};
   const [subjects, setSubjects] = useState([]);
+  const [meetingInProgress, setMeetingInProgress] = useState(false);
 
   useEffect(() => {
     if (extractedText) {
@@ -37,26 +38,45 @@ const Meeting = () => {
     ));
   };
 
-  const handleStartMeeting = async () => {
-    // Replace with your backend endpoint and data format
-    try {
-      const response = await fetch('/start-meeting', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ subjects }),
-      });
-      if (response.ok) {
-        console.log('Meeting started successfully');
-      } else {
-        console.error('Error starting meeting');
+  const handleMeetingButton = async () => {
+    if (!meetingInProgress) {
+      try {
+        const response = await fetch('http://localhost:5000/Start', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ meetingMinutes: extractedText }),
+        });
+        if (response.ok) {
+          setMeetingInProgress(true);
+          console.log('Meeting started successfully');
+        } else {
+          console.error('Error starting meeting');
+        }
+      } catch (error) {
+        console.error('Error sending request:', error);
       }
-    } catch (error) {
-      console.error('Error sending request:', error);
+    } else {
+      try {
+        const response = await fetch('http://localhost:5000/Stop', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        if (response.ok) {
+          setMeetingInProgress(false);
+          console.log('Meeting stopped successfully');
+        } else {
+          console.error('Error stopping meeting');
+        }
+      } catch (error) {
+        console.error('Error sending request:', error);
+      }
     }
   };
-//hehehehehe
+
   return (
     <div>
       <h1 style={{marginLeft:"10px"}}>Meeting Minutes</h1>
@@ -79,8 +99,12 @@ const Meeting = () => {
           </AccordionDetails>
         </Accordion>
       ))}
-      <Button sx={{marginTop:"15px",marginLeft:"10px"}} variant="contained" onClick={handleStartMeeting}>
-        Start Meeting
+      <Button
+        sx={{marginTop:"15px", marginLeft:"10px"}}
+        variant="contained"
+        onClick={handleMeetingButton}
+      >
+        {meetingInProgress ? 'Stop Meeting' : 'Start Meeting'}
       </Button>
     </div>
   );
