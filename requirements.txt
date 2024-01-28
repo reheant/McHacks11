@@ -5,6 +5,5 @@ sounddevice
 scipy
 pydub
 ffmpeg-python
-speech_recognition
 openai
 flask_cors

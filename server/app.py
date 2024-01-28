@@ -8,5 +8,12 @@ CORS(app)
 def get_data():
     return jsonify({'data': 'This is data from the Flask server'})
 
+@app.route('/recordvoice', methods=['POST'])
+def record_voice():
+    data = request.json
+    userName = data.get('userName')
+    create_audio(userName)
+    return jsonify({'status': 'success'})
+
 if __name__ == '__main__':
     app.run(debug=True)

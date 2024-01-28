@@ -1,5 +1,5 @@
 import os
-import pvfalcon
+import pvfalcon as pvfalcon
 import sounddevice as sd
 from scipy.io.wavfile import write
 import wavio as wv
@@ -14,7 +14,7 @@ def create_audio(count, bitrate="192k"):
     
     duration = 10
     recording = sd.rec(int(duration * freq), 
-                    samplerate=freq, channels=2)
+                    samplerate=freq, channels=1)
     sd.wait()
     
 
