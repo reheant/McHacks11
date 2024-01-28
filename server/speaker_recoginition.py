@@ -15,7 +15,7 @@ def create_audio(name="transcript.wav", bitrate="192k"):
     
     duration = 10
     recording = sd.rec(int(duration * freq), 
-                    samplerate=freq, channels=2)
+                    samplerate=freq, channels=1)
     sd.wait()
     
 
