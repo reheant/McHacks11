@@ -1,16 +1,18 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from test import final_record, read_json_objects_from_file
-from speaker_recoginition import create_audio
+import speaker_recoginition
+from speaker_recoginition import create_audio, record
 from Pdf2Text import extract_text_from_pdf
 import json
+import threading
 
 
 app = Flask(__name__)
 
 CORS(app, origins=["*"])
 
-
+threads =[]
 @app.route('/api/data', methods=['GET'])
 def get_data():
     return jsonify({'data': 'This is data from the Flask server'})
@@ -23,6 +25,31 @@ def record_voice():
         userName = data.get('userName')
         create_audio(f"{userName}.wav")
         return jsonify({'status': 'success'})
+    except Exception as e:
+        print(e) 
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/Start', methods=['POST'])
+def record():
+    try:
+        record_thread = threading.Thread(target=record)
+        listen_thread = threading.Thread(target=final_record)
+
+        record_thread.start()
+        listen_thread.start()
+        threads.append(record_thread)
+        threads.append(listen_thread)
+    except Exception as e:
+        print(e) 
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+@app.route('/Stop', methods=['POST'])
+def record():
+    try:
+        speaker_recoginition.ended= True
+        for thread in threads:
+            thread.join()
+
     except Exception as e:
         print(e) 
         return jsonify({'status': 'error', 'message': str(e)}), 500
@@ -50,8 +77,7 @@ def transform_pdf():
     return jsonify({'extracted_text': extracted_text})
 
 
-
-
+  
 
 @app.route('/Meeting', methods=['POST'])
 def HandleMeetingMinutes():
