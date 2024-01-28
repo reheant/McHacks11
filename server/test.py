@@ -44,14 +44,14 @@ def setting_openAI(transcript, meeting_minutes):
         file.write(message + '\n')
 
 
-def record_audio(start_time, init_rec, source):
+def record_audio(start_time, init_rec, source,agenda):
     meeting_transcript = ""
     with ThreadPoolExecutor(max_workers=1) as executor:
         while time.time() - start_time < (30):
             audio = init_rec.record(source, duration=10)
             future = executor.submit(recognize_audio, audio)
             meeting_transcript += future.result()
-            setting_openAI(meeting_transcript, set_meeting_minutes())
+            setting_openAI(meeting_transcript, set_meeting_minutes(agenda))
             time.sleep(1) 
     return meeting_transcript
 
@@ -60,7 +60,7 @@ def final_record(agenda):
     set_meeting_minutes(agenda)
     with sr.Microphone() as source:
         start_time = time.time()
-        transcript = record_audio(start_time, init_rec, source)
+        transcript = record_audio(start_time, init_rec, source,agenda)
         print(transcript)
 
 
