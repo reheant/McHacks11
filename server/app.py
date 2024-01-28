@@ -54,9 +54,7 @@ def record3():
         for thread in threads:
             thread.join()
         create_trims()
-        print("hello")
-        print(transcript())
-        return jsonify({'status': 'success'})
+        return(jsonify(transcript()))
     except Exception as e:
         print(e) 
         return jsonify({'status': 'error', 'message': str(e)}), 500
