@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from speaker_recoginition import create_audio
+from Pdf2Text import extract_text_from_pdf
+
 
 app = Flask(__name__)
 
