@@ -17,7 +17,7 @@ def record_voice():
     try:
         data = request.json
         userName = data.get('userName')
-        create_audio(userName)
+        create_audio(f"{userName}.wav")
         return jsonify({'status': 'success'})
     except Exception as e:
         print(e) 
