@@ -4,11 +4,12 @@ import sounddevice as sd
 from scipy.io.wavfile import write
 import wavio as wv
 from pydub import AudioSegment
+import re
 
 access_key = os.environ.get("API_KEY")
 audio_directory = "audio"
 
-def create_audio(count, bitrate="192k"):
+def create_audio(name="transcript.wav", bitrate="192k"):
 
     freq = 44100
     
@@ -20,13 +21,12 @@ def create_audio(count, bitrate="192k"):
 
     if not os.path.exists(audio_directory):
         os.makedirs(audio_directory)
-    name =f"user_{count}.wav"
-    if count<0:
-        name = "transcript.wav"
 
     write(f"{audio_directory}\\{name}", freq, recording)
 
     wv.write(f"{audio_directory}\\{name}", recording, freq, sampwidth=2)
+
+
 
 def diaritize(path):
     falcon = pvfalcon.create(access_key=access_key)
@@ -50,18 +50,52 @@ def create_trims():
         if segment.speaker_tag not in speakers:
             speakers.add(segment.speaker_tag)
             trim_audio(f"{audio_directory}\\transcript.wav",segment.speaker_tag, segment.start_sec,segment.end_sec)
-create_audio(1)
-create_audio(2)
-def merge (file1, file2, count1, count2):
+create_audio("Richard.wav")
+print("someone else talk")
+create_audio("Rehean.wav")
+print("someone else talk")
+create_audio()
+create_trims()
+
+def merge (file1, file2)->str:
 
     audio1 = AudioSegment.from_wav(file1)
     audio2 = AudioSegment.from_wav(file2)
 
     merged_audio = audio1 + audio2
 
-    merged_audio.export(f"{audio_directory}\\merged_{count1}_{count2}.wav", format="wav")
+    merged_audio.export(f"{audio_directory}\\merged.wav", format="wav")
+    return f"{audio_directory}\\merged.wav"
 
-merge(f"{audio_directory}\\user_1.wav",f"{audio_directory}\\user_2.wav",1,2)
+
+def compare(input)-> bool:
+    segments = diaritize(input)
+    if len(segments)>1:
+        return False
+    return True
+
+def match()-> dict:
+    matches = {}
+    all_files = os.listdir("audio")
+    trimmed_files = [file for file in all_files if file.startswith("trim")]
+    user_files = [file for file in all_files if not file.startswith("trim") and not file=="transcript.wav"]
+    for trimmed_file in trimmed_files:
+        for user_file in user_files:
+            merged = merge(f"{audio_directory}\\{user_file}", f"{audio_directory}\\{trimmed_file}")        
+            match = re.search(r'\d+', trimmed_file)
+            if compare(merged):
+                matches[match.group()] = user_file.replace(".wav", "")
+
+        matches[match.group()] = "UNKNOWN"
+    
+    return matches
+print(match())
+
+        
+
+
+
+
 
 
 
