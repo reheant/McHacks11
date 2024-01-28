@@ -1,9 +1,9 @@
 import speech_recognition as sr
 import time
 from concurrent.futures import ThreadPoolExecutor
-import openai
+import openai, json
 client = openai.OpenAI()
-
+init_rec = sr.Recognizer()
 def set_meeting_minutes():
     meeting_minutes = '''
 Meeting Agenda
@@ -62,7 +62,9 @@ def setting_openAI(transcript, meeting_minutes):
     ]
 )
     
-    print(completion.choices[0].message)
+    message = completion.choices[0].message.content
+    with open('meeting_analysis_output.txt', 'a') as file:
+        file.write(message + '\n')
 
 
 def record_audio(start_time, init_rec, source):
@@ -76,10 +78,38 @@ def record_audio(start_time, init_rec, source):
             time.sleep(1) 
     return meeting_transcript
 
-init_rec = sr.Recognizer()
-with sr.Microphone() as source:
-    start_time = time.time()
-    transcript = record_audio(start_time, init_rec, source)
-    print(transcript)
+def final_record():
+    with sr.Microphone() as source:
+        start_time = time.time()
+        transcript = record_audio(start_time, init_rec, source)
+        print(transcript)
 
 
+def read_json_objects_from_file():
+    file_path = "./meeting_analysis_output.txt"
+    with open(file_path, 'r') as file:
+        file_content = file.read().strip()
+        json_objects = []
+        brace_level = 0
+        current_object = ''
+
+        for char in file_content:
+            if char == '{':
+                brace_level += 1
+                current_object += char
+            elif char == '}':
+                brace_level -= 1
+                current_object += char
+                if brace_level == 0:
+                    try:
+                        json_objects.append(json.loads(current_object))
+                    except json.JSONDecodeError as e:
+                        print("Error")
+                    current_object = ''
+            else:
+                if brace_level > 0:
+                    current_object += char
+
+        return json_objects
+
+#final_record()

@@ -1,8 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-
+from test import final_record, read_json_objects_from_file
 from speaker_recoginition import create_audio
 from Pdf2Text import extract_text_from_pdf
+import json
 
 
 app = Flask(__name__)
@@ -49,7 +50,8 @@ def transform_pdf():
     return jsonify({'extracted_text': extracted_text})
 
 
-  
+
+
 
 @app.route('/Meeting', methods=['POST'])
 def HandleMeetingMinutes():
@@ -61,6 +63,13 @@ def HandleMeetingMinutes():
     # Send back a confirmation response
     return jsonify({'status': 'success', 'message': 'Meeting minutes received successfully.'})
 
+
+@app.route('/checkbox', methods=['POST'])
+def get_gpt_json():
+    json_objects = read_json_objects_from_file()
+    json_result_str = json.dumps(json_objects, indent=4)
+    print(json_result_str)
+        
 
 
 if __name__ == '__main__':
