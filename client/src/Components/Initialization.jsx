@@ -11,7 +11,7 @@ const NewPage = () => {
 
   const handleRecord = async (userName) => {
     try {
-      const response = await fetch('http://localhost:5000/record_voice', { // Replace with your Flask server URL
+      const response = await fetch('http://localhost:5000/recordvoice', { // Replace with your Flask server URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
