@@ -1,10 +1,12 @@
 import os
 import pvfalcon
+import pvleopard
 import sounddevice as sd
 from scipy.io.wavfile import write
 import wavio as wv
 from pydub import AudioSegment
 import re
+import speech_recognition as sr
 
 
 audio_directory = "audio"
@@ -40,7 +42,7 @@ def diaritize(path):
     return segments
 def trim_audio(input_path, count, start_ms, end_ms):
     audio = AudioSegment.from_wav(input_path)
-    trimmed_audio = audio[start_ms:end_ms]
+    trimmed_audio = audio[start_ms*1000:end_ms*1000]
     trimmed_audio.export(f"{audio_directory}\\trim_{count}.wav", format="wav")
 
 def create_trims():
@@ -65,7 +67,11 @@ def merge (file1, file2)->str:
 
 def compare(input)-> bool:
     segments = diaritize(input)
-    if len(segments)>1:
+    tags = []
+    for segment in segments:
+        if segment.speaker_tag not in tags:
+            tags.append(segment.speaker_tag)
+    if len(tags)>1:
         return False
     return True
 
@@ -85,17 +91,48 @@ def match()-> dict:
     
     return matches
 
+def transcribe_wav_with_timestamps(file_path):
+    # Load the WAV file
+    audio = AudioSegment.from_wav(file_path)
 
+    # Set up the speech recognition object
+    recognizer = sr.Recognizer()
+
+    # Transcribe the audio
+    with sr.AudioFile(file_path) as source:
+        audio_data = recognizer.record(source)
+
+    try:
+        # Use the Google Web Speech API for transcription
+        transcript = recognizer.recognize_google(audio_data, show_all=True)
+        # Extract timestamps and text from the recognition result
+        print(transcript)
+        segments = transcript['alternative'][0]['words']
+        for segment in segments:
+            start_time = segment['start']
+            end_time = segment['end']
+            word = segment['word']
+            print(f"{start_time} - {end_time}: {word}")
+    except sr.UnknownValueError:
+        print("Speech Recognition could not understand audio")
+    except sr.RequestError as e:
+        print(f"Could not request results from Google Speech Recognition service; {e}")
+
+def timestamps():
+    leopard = pvleopard.create(access_key=access_key)
+    transcript, words = leopard.process_file(f"{audio_directory}\\transcript.wav")
+    leopard.delete()
+    return words
 if __name__ =="__main__":
 
     access_key = os.environ.get("API_KEY")
-    create_audio("Richard.wav")
-    print("someone else talk")
-    create_audio("Rehean.wav")
-    print("someone else talk")
+    leopard = pvleopard.create(access_key=access_key)
+    #create_audio("Richard.wav")
+    #create_audio()
+    #create_trims()
+    #print(match())
     create_audio()
-    create_trims()
-    print(match())
+    print(timestamps())
 
 
 
