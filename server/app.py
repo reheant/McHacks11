@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from test import final_record, read_json_objects_from_file
 import speaker_recoginition
@@ -6,8 +6,7 @@ from speaker_recoginition import create_audio, record2, transcript, create_trims
 from Pdf2Text import extract_text_from_pdf
 import json
 import threading
-from tkinter import *
-import tkinter.messagebox 
+
 
 app = Flask(__name__)
 
@@ -55,18 +54,7 @@ def record3():
         for thread in threads:
             thread.join()
         create_trims()
-        
-        transcript= speaker_recoginition.transcript()
-        root = tkinter.Tk() 
-  
-        root.title("Transcript") 
-        root.geometry('500x300')
-        def onClick(): 
-            tkinter.messagebox.showinfo("Transcript",  transcript)
-        button = Button(root, text="Transcript", command=onClick, height=5, width=10)
-        button.pack(side='bottom') 
-        root.mainloop() 
-        return
+        return(jsonify(transcript()))
     except Exception as e:
         print(e) 
         return jsonify({'status': 'error', 'message': str(e)}), 500
@@ -111,8 +99,9 @@ def HandleMeetingMinutes():
 def get_gpt_json():
     json_objects = read_json_objects_from_file()
     json_result_str = json.dumps(json_objects, indent=4)
-    print(json_result_str)
+    return(json_result_str)
         
+
 
 if __name__ == '__main__':
     app.run(debug=True)
